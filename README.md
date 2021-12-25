@@ -9,5 +9,5 @@ Netflow data should be downloaded and stored in a Google cloud bucket. The data 
 ## Setup
 
 1. Clone this repo
-2. Run the apache beam pipeline to read the compressed netflow data and write it to bigquery
+2. Run the pipeline.py to read the compressed netflow data and write it to bigquery
 3. Run the setup.sql script to get the netflow data on a device level

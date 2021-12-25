@@ -1,0 +1,68 @@
+[
+  {
+    "description": "The start time of the event in epoch time format",
+    "mode": "REQUIRED",
+    "name": "Time",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The duration of the event in seconds.\n",
+    "mode": "REQUIRED",
+    "name": "Duration",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The device that likely initiated the event.\n",
+    "mode": "REQUIRED",
+    "name": "SrcDevice",
+    "type": "STRING"
+  },
+  {
+    "description": "The receiving device.\n",
+    "mode": "REQUIRED",
+    "name": "DstDevice",
+    "type": "STRING"
+  },
+  {
+    "description": "The protocol number.",
+    "mode": "NULLABLE",
+    "name": "Protocol",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The port used by the SrcDevice.",
+    "mode": "NULLABLE",
+    "name": "SrcPort",
+    "type": "STRING"
+  },
+  {
+    "description": "The port used by the DstDevice.",
+    "mode": "NULLABLE",
+    "name": "DstPort",
+    "type": "STRING"
+  },
+  {
+    "description": "The number of packets the SrcDevice sent during the event.",
+    "mode": "NULLABLE",
+    "name": "SrcPackets",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The number of packets the DstDevice sent during the event.",
+    "mode": "NULLABLE",
+    "name": "DstPackets",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The number of bytes the SrcDevice sent during the event.",
+    "mode": "REQUIRED",
+    "name": "SrcBytes",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The number of bytes the DstDevice sent during the event.",
+    "mode": "REQUIRED",
+    "name": "DstBytes",
+    "type": "INTEGER"
+  }
+]

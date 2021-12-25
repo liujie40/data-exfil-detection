@@ -8,7 +8,7 @@ with open("./data-eng/netflow_table_schema.json", "r") as f:
     table_schema = json.load(f)
 
 
-table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow"
+table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
 
 with beam.Pipeline() as pipeline:
   readable_files = (

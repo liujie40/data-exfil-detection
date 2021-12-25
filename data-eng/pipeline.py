@@ -24,5 +24,6 @@ with beam.Pipeline() as pipeline:
             table_spec,
             schema=table_schema,
             write_disposition=beam.io.BigQueryDisposition.WRITE_EMPTY,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+            custom_gcs_temp_location=f"{os.environ['GCP_BUCKET_NAME']}/tmp/"
         ))

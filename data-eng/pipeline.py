@@ -1,5 +1,6 @@
 import apache_beam as beam
 from apache_beam.io import fileio
+from apache_beam.options.pipeline_options import PipelineOptions
 import json
 import os
 
@@ -10,7 +11,15 @@ with open("./data-eng/netflow_table_schema.json", "r") as f:
 
 table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
 
-with beam.Pipeline() as p:
+beam_options = PipelineOptions(
+    runner="DataflowRunner",
+    project=os.environ["GCP_PROJECT"],
+    # job_name='unique-job-name',
+    temp_location=f"gs://{os.environ['GCP_BUCKET_NAME']}/tmp",
+    region="europe-west2"
+)
+
+with beam.Pipeline(options=beam_options) as p:
   readable_files = (
       p
       | fileio.MatchFiles(f"{os.environ['GCP_BUCKET_NAME']}/compressed/netflow_day-*.bz2")

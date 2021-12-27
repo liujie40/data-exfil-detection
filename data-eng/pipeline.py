@@ -14,7 +14,6 @@ table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
 beam_options = PipelineOptions(
     runner="DataflowRunner",
     project=os.environ["GCP_PROJECT"],
-    # job_name='unique-job-name',
     temp_location=f"gs://{os.environ['GCP_BUCKET_NAME']}/tmp",
     region="europe-west2"
 )

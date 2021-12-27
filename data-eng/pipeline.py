@@ -10,9 +10,9 @@ with open("./data-eng/netflow_table_schema.json", "r") as f:
 
 table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
 
-with beam.Pipeline() as pipeline:
+with beam.Pipeline() as p:
   readable_files = (
-      pipeline
+      p
       | fileio.MatchFiles(f"{os.environ['GCP_BUCKET_NAME']}/compressed/netflow_day-*.bz2")
       | fileio.ReadMatches())
   files_and_contents = (

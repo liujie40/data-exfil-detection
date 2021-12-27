@@ -4,14 +4,14 @@ import json
 import os
 
 
-if __name__ == "__main__":
+with open("./data-eng/netflow_table_schema.json", "r") as f:
+    table_schema = json.load(f)
 
-    with open("./data-eng/netflow_table_schema.json", "r") as f:
-        table_schema = json.load(f)
-    
-    
-    table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
-    
+
+table_spec = f"{os.environ['GCP_PROJECT']}:lanl_netflow.netflow_V2"
+
+
+def run():
     with beam.Pipeline() as pipeline:
       readable_files = (
           pipeline
@@ -29,3 +29,6 @@ if __name__ == "__main__":
                 create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
                 custom_gcs_temp_location=f"gs://{os.environ['GCP_BUCKET_NAME']}/tmp/"
             ))
+            
+if __name__ == "__main__":
+    run()

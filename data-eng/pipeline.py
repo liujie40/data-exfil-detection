@@ -18,7 +18,7 @@ with beam.Pipeline(options=beam_options) as p:
       p
       | fileio.MatchFiles(f"gs://{os.environ['GCP_BUCKET_NAME']}/compressed/netflow_day-*.bz2")
       | fileio.ReadMatches()
-      | beam.reshuffle())
+      | beam.Reshuffle())
   files_and_contents = (
       readable_files
       | beam.Map(lambda x: (x.metadata.path, x.read_utf8())))

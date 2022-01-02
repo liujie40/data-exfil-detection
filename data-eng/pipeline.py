@@ -16,7 +16,7 @@ beam_options = PipelineOptions(None)
 with beam.Pipeline(options=beam_options) as p:
   readable_files = (
       p
-      | fileio.MatchFiles(f"gs://{os.environ['GCP_BUCKET_NAME']}/uncompressed/netflow_day-")
+      | fileio.MatchFiles(f"gs://{os.environ['GCP_BUCKET_NAME']}/uncompressed/netflow_day-*")
       | fileio.ReadMatches())
   files_and_contents = (
       readable_files

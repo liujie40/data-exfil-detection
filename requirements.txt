@@ -1,1 +1,4 @@
 apache-beam[gcp]
+black
+google-client-libraries
+pytest

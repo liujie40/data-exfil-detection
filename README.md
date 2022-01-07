@@ -4,10 +4,12 @@ This project is an attempt at detecting data exfiltration just before or during 
 
 ## Prerequisites
 
-Netflow data should be downloaded and stored in a Google cloud bucket. The data can be downloaded from https://csr.lanl.gov/data/2017/.
+Netflow data should be downloaded and stored in bigquery. The data can be downloaded from https://csr.lanl.gov/data/2017/.
 
 ## Setup
 
 1. Clone this repo
-2. Run the pipeline.py to read the compressed netflow data and write it to bigquery
-3. Run the setup.sql script to get the netflow data on a device level
+2. Run the setup.sql script to get the netflow data on a device level
+
+## TODO
+* setup CI pipeline using github actions

@@ -1,4 +1,6 @@
 apache-beam[gcp]
 black
-google-client-libraries
+google-cloud-bigquery
+pandas
+pyarrow
 pytest

@@ -29,7 +29,7 @@ def create_stored_procedures(session):
         procedures = f.read()
     
     procs_processed = 0
-    for proc in procedures.split(";")
+    for proc in procedures.split(";"):
         q = session.query(proc)
         query_job = q.result()
         

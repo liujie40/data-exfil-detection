@@ -12,11 +12,13 @@ import pytest
 logger = logging.getLogger(__name__)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def session():
     client = bigquery.Client()
-    yield client
     logging.info("Session created")
+    
+    yield client
+    
     client.close()
     logging.info("Session closed")
 
@@ -25,28 +27,44 @@ def session():
 def create_stored_procedures(session):
     logging.info("Creating stored procedures")
     
-    with open("data-eng/procedures.sql", r) as f:
+    with open("data-eng/procedures.sql", "r") as f:
         procedures = f.read()
     
     procs_processed = 0
     for proc in procedures.split(";"):
-        q = session.query(proc)
-        query_job = q.result()
-        
-        procs_processed += 1
+        if proc.replace("\n", ""):
+            logging.debug(f"Procedure being ran:\n{proc}")
+            
+            q = session.query(proc)
+            query_job = q.result()
+            
+            procs_processed += 1
     
     logging.info(f"{procs_processed} statements executed")
     
     
 @pytest.mark.usefixtures("create_stored_procedures")
-def test_get_device_frequencies_exists(session):
-    q = session.query(
-        """SELECT *
-           FROM `data-exfil-detection.lanl_netflow.INFORMATION_SCHEMA.ROUTINES`
-           WHERE routine_name = 'test_proc'"""
-        )
-    results = q.result().to_dataframe()
+def test_data_is_transformed(session):
+    with open("data-eng/setup.sql", "r") as f:
+        script = f.read()
     
-    pd.testing.assert_series_equal(
-        results["routine_name"], pd.Series(["test_proc"])
-    )
+    logging.debug(f"Script being ran:\n{script}")
+    
+    q = session.query(script)
+    query_job = q.result()
+    
+    transformed_data = session.query(
+        """
+        SELECT * FROM `data-exfil-detection.test_data.transformed_data`
+        """
+    ).result().to_dataframe()
+    logging.debug(f"Transformed_data:\n{transformed_data}")
+    
+    test_data = session.query(
+        """
+        SELECT * FROM `data-exfil-detection.test_data.device_level_data`
+        """
+    ).result().to_dataframe()
+    logging.debug(f"Test_data:\n{test_data}")
+    
+    pd.testing_assert_frame_equal(transformed_data, test_data)

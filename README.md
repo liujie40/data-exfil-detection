@@ -26,7 +26,8 @@ bq mk --table --schema=./data-eng/schemas/device_level_table_schema.json test_da
 
 #### 3. Create test data
 ```
-./data-eng/create_test_data.sql
+cat data-eng/create_test_data.sql | bq --location=EU query \
+   --use_legacy_sql=false
 ```
 
 #### 4. Load netflow data into big query
@@ -41,7 +42,8 @@ bq --location=EU load \
 
 #### 5. Transform the netflow data
 ```
-
+cat data_eng/sql/transform.sql | bq --location=EU query \
+   --use_legacy_sql=false
 ```
 
 ## TODO

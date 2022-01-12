@@ -1,0 +1,32 @@
+[
+  {
+    "description": "The device",
+    "mode": "REQUIRED",
+    "name": "Devices",
+    "type": "STRING"
+  },
+  {
+    "description": "The timestamp for the window of communication",
+    "mode": "REQUIRED",
+    "name": "Timestamp",
+    "type": "DATETIME"
+  },
+  {
+    "description": "The port being used",
+    "mode": "REQUIRED",
+    "name": "Port",
+    "type": "STRING"
+  },
+  {
+    "description": "The number of bytes going into the device",
+    "mode": "REQUIRED",
+    "name": "BytesIn",
+    "type": "INTEGER"
+  },
+  {
+    "description": "The number of bytes going out of a device",
+    "mode": "REQUIRED",
+    "name": "BytesOut",
+    "type": "INTEGER"
+  }
+]

@@ -15,16 +15,28 @@ git clone https://github.com/danielyates2/data-exfil-detection.git
 
 #### 2. Setup big query datasets and table
 ```
-bq mk --dataset lanl_netflow --location=us-central1
-bq mk --dataset test_data --location=us-central1
+bq mk --dataset --location=us-central1 lanl_netflow
+bq mk --dataset --location=us-central1 test_data
 
-bq mk --table lanl_netflow.netflow --schema=./data-eng/netflow_table_schema.json
-bq mk --table test_data.netflow --schema=./data-eng/netflow_table_schema.json
+bq mk --table --schema=./data-eng/schemas/netflow_table_schema.json lanl_netflow.netflow
+
+bq mk --table --schema=./data-eng/schemas/netflow_table_schema.json test_data.netflow
+bq mk --table --schema=./data-eng/schemas/device_level_table_schema.json test_data.device_level_data
 ```
 
 #### 3. Create test data
 ```
 ./data-eng/create_test_data.sql
+```
+
+#### 4. Load netflow data into big query
+```
+bq --location=us-central1 load \
+   --noreplace \
+   --source_format=CSV \
+   data-exfil-detection:lanl_netflow.netflow \
+   gs://lanl-netflow/test/* \
+   data-eng/netflow_table_schema.json
 ```
 
 ## TODO

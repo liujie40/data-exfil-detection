@@ -1,6 +1,7 @@
 """
-Unit test the get_device_frequencies stored procedure to ensure
-it calculates the frequencies of each device in the dataset
+Unit test the create_strata stored procedure to ensure
+it creates strata based on the number of netflow communications
+the devices are involved in
 
 Author: Daniel Yates
 """
@@ -21,39 +22,40 @@ def test_get_device_frequencies_exists(session):
         """
         SELECT *
         FROM `data-exfil-detection.test_data.INFORMATION_SCHEMA.ROUTINES`
-        WHERE routine_name = 'get_device_frequencies'
+        WHERE routine_name = 'create_strata'
     """
     )
     results = query.result().to_dataframe()
 
-    expected = pd.Series(["get_device_frequencies"], name="routine_name")
+    expected = pd.Series(["create_strata"], name="routine_name")
 
     logger.debug("Results:\n%s", results)
     logger.debug("Results name:\n%s", results["routine_name"])
     logger.debug("Expected name:\n%s", expected)
 
-
     pd.testing.assert_series_equal(results["routine_name"], expected)
+    
 
-
-def test_get_device_frequencies_calculate_frequencies(session):
+def test_create_strata_stratifies(session):
     """
-    Check that the number of each device is calculated
+    Check that stored procedure splits the data into
+    separate strata
     """
     query = session.query(
         """
-        CALL test_data.get_device_frequencies();
+        CALL test_data.create_strata();
         
-        SELECT Device, Count FROM _device_freq;
+        SELECT * FROM _device_strata;
     """
     )
     results = query.result().to_dataframe()
-
-    expected = pd.DataFrame(
-        {"Device": ["Device3", "Device1", "Device2"], "Count": [17, 15, 10]}
-    )
-
+    
+    expected = pd.DataFrame({
+        "Device": ["Device3", "Device1", "Device2"],
+        "Strata": ["high", "medium", "low"]
+    })
+    
     logger.debug("Results:\n%s", results)
-    logger.debug("Expected:\n%s", expected)
-
-    pd.testing.assert_frame_equal
+    logger.debug("Expected strata:\n%s", expected)
+    
+    pd.testing.assert_frame_equal(results, expected)

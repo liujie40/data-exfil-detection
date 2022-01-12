@@ -4,7 +4,6 @@ function.
 
 Author: Daniel Yates
 """
-from google.cloud import bigquery
 import logging
 import pandas as pd
 import pytest
@@ -13,42 +12,45 @@ import pytest
 logger = logging.getLogger(__name__)
 
 
-## ###################### ##
-## GET_DEVICE_FREQUENCIES ##
-## ###################### ##
 @pytest.mark.usefixtures("create_stored_procedures")
 def test_get_device_frequencies_exists(session):
-    q = session.query(
+    """
+    Check that stored procedure is available in the DB
+    """
+    query = session.query(
         """
         SELECT *
         FROM `data-exfil-detection.test_data.INFORMATION_SCHEMA.ROUTINES`
         WHERE routine_name = 'get_device_frequencies'
     """
     )
-    results = q.result().to_dataframe()
+    results = query.result().to_dataframe()
 
     expected = pd.Series(["get_device_frequencies"], name="routine_name")
 
-    logger.debug(f"Results:\n{results}")
-    logger.debug(f"Results name:\n{results['routine_name']}")
-    logger.debug(f"Expected name:\n{expected}")
+    logger.debug("Results:\n%s", results)
+    logger.debug("Results name:\n%s", results["routine_name"])
+    logger.debug("Expected name:\n%s", expected)
 
     pd.testing.assert_series_equal(results["routine_name"], expected)
 
 
 def test_get_device_frequencies_calculate_frequencies(session):
-    q = session.query(
+    """
+    Check that the number of each device is calculated
+    """
+    query = session.query(
         """
         CALL test_data.get_device_frequencies()
     """
     )
-    results = q.result().to_dataframe()
+    results = query.result().to_dataframe()
 
     expected = pd.DataFrame(
         {"Device": ["Device3", "Device1", "Device2"], "Count": [17, 15, 10]}
     )
 
-    logger.debug(f"Results:\n{results}")
-    logger.debug(f"Expected:an{expected}")
+    logger.debug("Results:\n%s", results)
+    logger.debug("Expected:\n%s", expected)
 
-    pd.testing.assert_frame_equal(results, expected)
+    pd.testing.assert_frame_equal

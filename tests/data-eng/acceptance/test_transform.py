@@ -3,7 +3,6 @@ Test that setup.sql transforms netflow data to device level network data
 
 Author: Daniel Yates
 """
-from google.cloud import bigquery
 import logging
 import pandas as pd
 import pytest
@@ -14,18 +13,22 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.usefixtures("create_stored_procedures")
 def test_data_is_transformed(session):
-    with open("data-eng/sql/transform.sql", "r") as f:
-        script = f.read()
+    """
+    Acceptance test to ensure the transform sql script
+    transforms netflow data to device level network data
+    """
+    with open("data-eng/sql/transform.sql", "r", encoding="utf-8") as transform_file:
+        script = transform_file.read()
 
     script = script.replace(
         "`data-exfil-detection.lanl_netflow.netflow`",
         "`data-exfil-detection.test_data.netflow`",
     )
 
-    logger.debug(f"Script being ran:\n{script}")
+    logger.debug("Script being ran:\n%s", script)
 
-    q = session.query(script)
-    query_job = q.result()
+    query = session.query(script)
+    query.result()
 
     transformed_data = (
         session.query(
@@ -36,7 +39,7 @@ def test_data_is_transformed(session):
         .result()
         .to_dataframe()
     )
-    logger.debug(f"Transformed_data:\n{transformed_data}")
+    logger.debug("Transformed_data:\n%s", transformed_data)
 
     test_data = (
         session.query(
@@ -47,6 +50,6 @@ def test_data_is_transformed(session):
         .result()
         .to_dataframe()
     )
-    logger.debug(f"Test_data:\n{test_data}")
+    logger.debug("Test_data:\n%s", test_data)
 
     pd.testing_assert_frame_equal(transformed_data, test_data)

@@ -47,4 +47,5 @@ cat data_eng/sql/transform.sql | bq --location=EU query \
 ```
 
 ## TODO
-* setup CI pipeline using github actions
+* Finish unit tests for first stored prco
+* Finish reformatting to comply with pylint

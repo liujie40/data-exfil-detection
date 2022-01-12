@@ -1,6 +1,12 @@
-from google.cloud import bigquery
+"""
+Fixtures to be used in SQL unit tests
+
+Author: Daniel Yates
+"""
 import logging
 import pytest
+
+from google.cloud import bigquery
 
 
 logger = logging.getLogger(__name__)
@@ -8,21 +14,28 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="session")
 def session():
+    """
+    Creates a bigquery connection to execute sql queries.
+    Closes the connection in the tear down
+    """
     client = bigquery.Client(location="EU")
-    logging.info("Session created")
+    logger.info("Session created")
 
     yield client
 
     client.close()
-    logging.info("Session closed")
+    logger.info("Session closed")
 
 
 @pytest.fixture(scope="session")
 def create_stored_procedures(session):
-    logging.info("Creating stored procedures")
+    """
+    Runs all of the SQL statements to create the stored procedures.
+    """
+    logger.info("Creating stored procedures")
 
-    with open("data-eng/sql/procedures.sql", "r") as f:
-        procedures = f.read()
+    with open("data-eng/sql/procedures.sql", "r", encoding="utf-8") as proc_file:
+        procedures = proc_file.read()
 
     procs_processed = 0
     for proc in procedures.split("END;"):
@@ -30,11 +43,11 @@ def create_stored_procedures(session):
             proc = proc.replace("lanl_netflow.", "test_data.")
             proc += "END;"
 
-            logging.debug(f"Procedure being ran:\n{proc}")
+            logger.debug("Procedure being ran:\n%s", proc)
 
-            q = session.query(proc)
-            query_job = q.result()
+            query = session.query(proc)
+            query.result()
 
             procs_processed += 1
 
-    logging.info(f"{procs_processed} statements executed")
+    logger.info("%d statements executed", procs_processed)

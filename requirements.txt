@@ -3,4 +3,5 @@ black
 google-cloud-bigquery
 pandas
 pyarrow
+pylint
 pytest

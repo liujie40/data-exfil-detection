@@ -1,13 +1,3 @@
-----------------------------------------------------------------------
--- TODO:                                                            --
---     * Check bigquery types and update table creation if required --
---     * Finish device strata query                                 --
-----------------------------------------------------------------------
-
-------------------------------------------
--- Stratify by number of communications --
-------------------------------------------
-
 CREATE TEMPORARY TABLE _device_frequencies (
   device STRING,
   freq INTEGER

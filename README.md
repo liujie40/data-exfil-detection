@@ -49,4 +49,3 @@ cat data_eng/sql/transform.sql | bq --location=EU query \
 ## TODO
 * Finish unit tests for first stored proc
 * Finish reformatting to comply with pylint
-* Write script to set up bigquery datasets and tables and run steps above

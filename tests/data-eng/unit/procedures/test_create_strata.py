@@ -43,6 +43,7 @@ def test_create_strata_stratifies(session):
     """
     query = session.query(
         """
+        CALL test_data.get_device_frequencies();
         CALL test_data.create_strata();
         
         SELECT * FROM _device_strata;

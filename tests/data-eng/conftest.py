@@ -8,10 +8,19 @@ import pytest
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
-
+from typing import List
 
 logger = logging.getLogger(__name__)
 
+
+@pytest.fixture(scope="function")
+def bq_setup_cli_args(request) -> List[str]:
+    logger.debug(
+        "Command passed to subprocess:\n%s",
+        " ".join(["python"] + request.param)
+    )
+    
+    yield request.param
 
 @pytest.fixture(scope="function")
 def bq_setup_script_teardown(request, session: bigquery.Client) -> None:
@@ -20,7 +29,8 @@ def bq_setup_script_teardown(request, session: bigquery.Client) -> None:
     try:
         start = request.param.index("-d")
     except ValueError:
-        start = request.param[2]
+        logger.warning("No datasets in arguments")
+        return None
     
     try:
         end = request.param.index("-t")

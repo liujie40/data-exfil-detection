@@ -5,3 +5,4 @@ pandas
 pyarrow
 pylint
 pytest
+pytest-console-scripts

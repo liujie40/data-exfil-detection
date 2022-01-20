@@ -1,6 +1,8 @@
 """
 Test the bq_setup script which creates the required
 big query tables
+
+Author: Daniel Yates
 """
 import logging
 import pytest
@@ -59,3 +61,34 @@ def test_test_data_netflow_table_exists(session: bigquery.Client, bq_setup_scrip
     test_data_netflow_table: bigquery.table.Table = session.get_table("test_test_data.netflow")
     
     assert test_data_netflow_table
+
+
+@pytest.mark.parametrize(
+    "bq_setup_script_teardown, bq_setup_cli_args",
+    [(table_args[:len(table_args) - 3], table_args[:len(table_args) - 3]), (table_args[:len(table_args) - 2], table_args[:len(table_args) - 2])],
+    indirect=True
+)
+def test_no_tables_passed_none_created(session: bigquery.Client, bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
+    """
+    Test that no tables are created if there aren't any passed as args
+    """
+    subprocess.run(["python"] + bq_setup_cli_args)
+
+    test_lanl_netflow_exists: Optional[bool] = None
+    test_test_data_netflow_exists: Optional[bool] = None
+    
+    try:
+        session.get_table("test_lanl_netflow.netflow")
+        test_lanl_netflow_exists = True
+    except NotFound:
+        test_lanl_netflow_exists = False
+    
+    try:
+        session.get_table("test_test_data.netflow")
+        test_test_data_netflow_exists = True
+    except NotFound:
+        test_test_data_netflow_exists = False  
+
+    assert not all([test_lanl_netflow_exists, test_test_data_netflow_exists])
+
+

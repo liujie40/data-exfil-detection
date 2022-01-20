@@ -8,11 +8,10 @@ import subprocess
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound, Conflict
-from typing import List
+from typing import List, Optional
 
 
 logger = logging.getLogger(__name__)
-
 
 full_args = [
     "data-eng/setup/bq_setup.py",
@@ -74,20 +73,22 @@ def test_no_datasets_passed_none_created(session: bigquery.Client, bq_setup_scri
     """
     subprocess.run(["python"] + bq_setup_cli_args)
     
-    test_lanl_netflow_not_exists = False
-    test_test_data_not_exists = False
+    test_lanl_netflow_exists: Optional[bool] = None
+    test_test_data_exists: Optional[bool] = None
     
     try:
         session.get_dataset("test_lanl_netflow")
+        test_lanl_netflow_exists = True
     except NotFound:
-        test_lanl_netflow_not_exists = True
+        test_lanl_netflow_exists = False
     
     try:
         session.get_dataset("test_test_data")
-    except NotFound:
-        test_test_data_not_exists = True
-        
-    assert all([test_lanl_netflow_not_exists, test_test_data_not_exists])
+        test_test_data_exists = True
+        except NotFound:
+            test_test_data_exists = False  
+
+    assert not all([test_lanl_netflow_exists, test_test_data_exists])
 
 
 @pytest.mark.parametrize(
@@ -119,6 +120,9 @@ def test_no_datasets_passed_warning_raised(bq_setup_script_teardown, bq_setup_cl
     indirect=True
 )
 def test_dataset_already_exists_fails(session: bigquery.Client, bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
+    """
+    Tests that the dataset creation fails if the dataset already exists
+    """
     start = bq_setup_cli_args.index("-d")
     end = len(bq_setup_cli_args)
     
@@ -126,6 +130,12 @@ def test_dataset_already_exists_fails(session: bigquery.Client, bq_setup_script_
         session.create_dataset(dataset)
         logger.debug("%s created", dataset)
     
-    with pytest.raises(Conflict):
-        subprocess.run(["python"] + bq_setup_cli_args, stderr=subprocess.STDOUT)
+    cp: subprocess.CompletedProcess = subprocess.run(
+        ["python"] + bq_setup_cli_args,
+        capture_output=True,
+        encoding="utf-8"
+    )
+    conflict_exception = Conflict.__module__ + "." + Conflict.__qualname__
+    
+    assert conflict_exception in vars(cp)["stderr"]
     

@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 full_args = [
     "data-eng/setup/bq_setup.py",
+    "data-exfil-detection",
     "-d",
     "test_lanl_netflow",
     "test_test_data",
@@ -26,12 +27,11 @@ full_args = [
     "test_test_data._device_strata"
 ]
 dataset_args = full_args[:full_args.index("-t")]
-table_args = full_args[:full_args.index("-t") + 3]
 
 
 @pytest.mark.parametrize(
     "bq_setup_script_teardown, bq_setup_cli_args",
-    [(dataset_args, dataset_args), (dataset_args[:3], dataset_args[:3])],
+    [(dataset_args, dataset_args), (dataset_args[:4], dataset_args[:4])],
     indirect=True
 )
 def test_lanl_netflow_dataset_exists(session: bigquery.Client, bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
@@ -47,7 +47,7 @@ def test_lanl_netflow_dataset_exists(session: bigquery.Client, bq_setup_script_t
 
 @pytest.mark.parametrize(
     "bq_setup_script_teardown, bq_setup_cli_args",
-    [(dataset_args, dataset_args), (dataset_args[:2] + dataset_args[3:4], dataset_args[:2] + dataset_args[3:4])],
+    [(dataset_args, dataset_args), (dataset_args[:3] + dataset_args[4:5], dataset_args[:3] + dataset_args[4:5])],
     indirect=True
 )
 def test_test_data_dataset_exists(session: bigquery.Client, bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
@@ -63,7 +63,7 @@ def test_test_data_dataset_exists(session: bigquery.Client, bq_setup_script_tear
 
 @pytest.mark.parametrize(
     "bq_setup_script_teardown, bq_setup_cli_args",
-    [(dataset_args[0:1], dataset_args[0:1]), (dataset_args[:2], dataset_args[:2])],
+    [(dataset_args[0:2], dataset_args[0:2]), (dataset_args[:3], dataset_args[:3])],
     indirect=True
 )
 def test_no_datasets_passed_none_created(session: bigquery.Client, bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
@@ -85,7 +85,7 @@ def test_no_datasets_passed_none_created(session: bigquery.Client, bq_setup_scri
     try:
         session.get_dataset("test_test_data")
         test_test_data_exists = True
-        except NotFound:
+    except NotFound:
             test_test_data_exists = False  
 
     assert not all([test_lanl_netflow_exists, test_test_data_exists])
@@ -93,7 +93,7 @@ def test_no_datasets_passed_none_created(session: bigquery.Client, bq_setup_scri
 
 @pytest.mark.parametrize(
     "bq_setup_script_teardown, bq_setup_cli_args",
-    [(dataset_args[0:1], dataset_args[0:1]), (dataset_args[:2], dataset_args[:2])],
+    [(dataset_args[0:2], dataset_args[0:2]), (dataset_args[:3], dataset_args[:3])],
     indirect=True
 )
 def test_no_datasets_passed_warning_raised(bq_setup_script_teardown, bq_setup_cli_args: List[str]) -> None:
@@ -114,8 +114,8 @@ def test_no_datasets_passed_warning_raised(bq_setup_script_teardown, bq_setup_cl
     "bq_setup_script_teardown, bq_setup_cli_args",
     [
         (dataset_args, dataset_args),
-        (dataset_args[:3], dataset_args[:3]),
-        (dataset_args[:2] + dataset_args[3:4], dataset_args[:2] + dataset_args[3:4])
+        (dataset_args[:4], dataset_args[:4]),
+        (dataset_args[:3] + dataset_args[4:5], dataset_args[:3] + dataset_args[4:5])
     ],
     indirect=True
 )

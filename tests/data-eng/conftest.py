@@ -3,15 +3,28 @@ Fixtures to be used in SQL unit tests
 
 Author: Daniel Yates
 """
+import json
 import logging
+import pathlib
 import pytest
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
-from typing import List
+from typing import List, Dict, Any, Union
 
 logger = logging.getLogger(__name__)
 
+
+@pytest.fixture(scope="function")
+def get_schema(request) -> Dict[str, Any]:
+    schema_path: Union[pathlib.Path, str] = request.param
+    logger.debug("Schema path provided: %s", schema_path)
+
+    if isinstance(schema_path, pathlib.Path) or isinstance(schema_path, str):
+        with open(schema_path, "r") as schema_file:
+            return json.load(schema_file)
+    else:
+        raise TypeError("%s is not a string or a pathlib.Path")
 
 @pytest.fixture(scope="function")
 def bq_setup_cli_args(request) -> List[str]:
@@ -21,6 +34,7 @@ def bq_setup_cli_args(request) -> List[str]:
     )
     
     yield request.param
+
 
 @pytest.fixture(scope="function")
 def bq_setup_script_teardown(request, session: bigquery.Client) -> None:

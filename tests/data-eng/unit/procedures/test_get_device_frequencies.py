@@ -34,7 +34,6 @@ def test_get_device_frequencies_exists(session: bigquery.Client) -> None:
     logger.debug("Results name:\n%s", results["routine_name"])
     logger.debug("Expected name:\n%s", expected)
 
-
     pd.testing.assert_series_equal(results["routine_name"], expected)
 
 

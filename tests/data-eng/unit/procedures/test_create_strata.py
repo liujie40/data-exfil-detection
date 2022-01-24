@@ -36,7 +36,7 @@ def test_get_device_frequencies_exists(session: bigquery.Client) -> None:
     logger.debug("Expected name:\n%s", expected)
 
     pd.testing.assert_series_equal(results["routine_name"], expected)
-    
+
 
 def test_create_strata_stratifies(session: bigquery.Client) -> None:
     """
@@ -52,13 +52,15 @@ def test_create_strata_stratifies(session: bigquery.Client) -> None:
     """
     )
     results: pd.DataFrame = query.result().to_dataframe()
-    
-    expected = pd.DataFrame({
-        "Device": ["Device3", "Device1", "Device2"],
-        "Strata": ["high", "medium", "low"]
-    })
-    
+
+    expected = pd.DataFrame(
+        {
+            "Device": ["Device3", "Device1", "Device2"],
+            "Strata": ["high", "medium", "low"],
+        }
+    )
+
     logger.debug("Results:\n%s", results)
     logger.debug("Expected strata:\n%s", expected)
-    
+
     pd.testing.assert_frame_equal(results, expected)

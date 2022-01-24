@@ -26,38 +26,38 @@ def get_schema(request) -> Dict[str, Any]:
     else:
         raise TypeError("%s is not a string or a pathlib.Path")
 
+
 @pytest.fixture(scope="function")
 def bq_setup_cli_args(request) -> List[str]:
     logger.debug(
-        "Command passed to subprocess:\n%s",
-        " ".join(["python"] + request.param)
+        "Command passed to subprocess:\n%s", " ".join(["python"] + request.param)
     )
-    
+
     yield request.param
 
 
 @pytest.fixture(scope="function")
 def bq_setup_script_teardown(request, session: bigquery.Client) -> None:
     yield
-    
+
     try:
         start = request.param.index("-d")
     except ValueError:
         logger.warning("No datasets in arguments")
         return None
-    
+
     try:
         end = request.param.index("-t")
     except ValueError:
         end = len(request.param)
-    
-    for dataset in request.param[start + 1: end]:
+
+    for dataset in request.param[start + 1 : end]:
         try:
             session.delete_dataset(dataset, delete_contents=True)
             logger.info("%s deleted", dataset)
         except NotFound:
             logger.warning("%s dataset not found", dataset)
-            
+
 
 @pytest.fixture(scope="session")
 def session() -> bigquery.Client:

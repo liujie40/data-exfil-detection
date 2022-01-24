@@ -3,12 +3,13 @@ Test the bq_setup script which creates the required
 big query datasets and tables
 """
 import logging
-import pytest
 import subprocess
 
-from google.cloud import bigquery
-from google.cloud.exceptions import NotFound
 from typing import List
+
+import pytest
+
+from google.cloud import bigquery
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,8 @@ def test_datasets_and_tables_created(
     """
     Tests if the lanl_netflow dataset exists
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     lanl_netflow_dataset: bigquery.dataset.Dataset = session.get_dataset(
         "test_lanl_netflow"

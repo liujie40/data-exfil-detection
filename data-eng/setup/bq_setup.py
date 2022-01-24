@@ -4,11 +4,13 @@ Script to create the required bigquery datasets and tables.
 Author: Daniel Yates
 """
 import argparse
-import logging
 import json
+import logging
+
+from typing import Dict, List
+
 
 from google.cloud import bigquery
-from typing import Dict, List, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +58,9 @@ else:
     for table in args["table"]:
         logger.info("Creating table %s", table)
 
-        with open(f"data-eng/schemas/{table.split('.')[1]}.json", "r") as schema_file:
+        with open(
+            f"data-eng/schemas/{table.split('.')[1]}.json", "r", encoding="utf-8"
+        ) as schema_file:
             schema = json.load(schema_file)
 
         table = bigquery.table.Table(f"{args['project']}." + table, schema)

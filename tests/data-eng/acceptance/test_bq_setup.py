@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 full_args = [
     "data-eng/setup/bq_setup.py",
+    "data-exfil-detection",
     "-d",
     "test_lanl_netflow",
     "test_test_data",
@@ -48,12 +49,15 @@ def test_datasets_and_tables_created(session: bigquery.Client, bq_setup_script_t
     test_data_device_freq_table: bigquery.table.Table = session.get_table("test_test_data._device_frequencies")
     test_data_device_strata_table: bigquery.table.Table = session.get_table("test_test_data._device_strata")
 
+    ## Datasets
     assert lanl_netflow_dataset
     assert test_data_dataset
     
+    ## Tables
     assert lanl_netflow_table
     assert test_data_netflow_table
     assert test_data_dld_table
     assert test_data_device_freq_table
     assert test_data_device_strata_table
     
+    ## Schemas?

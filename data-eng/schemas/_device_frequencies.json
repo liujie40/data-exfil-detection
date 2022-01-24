@@ -1,0 +1,14 @@
+[
+  {
+    "description": "The device",
+    "mode": "REQUIRED",
+    "name": "Device",
+    "type": "STRING"
+  },
+  {
+    "description": "The count of occurences for the given device",
+    "mode": "REQUIRED",
+    "name": "Count",
+    "type": "INTEGER"
+  }
+]

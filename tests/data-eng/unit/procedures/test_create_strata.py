@@ -9,8 +9,8 @@ import logging
 import pandas as pd
 import pytest
 
-from google.cloud import bigquery.Client
-from google.cloud import bigquery.job.QueryJob
+from google.cloud import bigquery
+
 
 logger = logging.getLogger(__name__)
 

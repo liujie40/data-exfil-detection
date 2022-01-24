@@ -1,0 +1,14 @@
+# This workflow will run black to reformat code on all pushs and pulls
+
+name: Black reformatting
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: psf/black@stable

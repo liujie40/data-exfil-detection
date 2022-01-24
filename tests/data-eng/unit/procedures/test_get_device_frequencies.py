@@ -50,11 +50,15 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
     )
     results: pd.DataFrame = query.result().to_dataframe()
 
-    expected = pd.DataFrame(
-        {"Device": ["Device3", "Device1", "Device2"], "Count": [17, 15, 10]}
+    expected: bigquery.job.QueryJob = session.query(
+        """
+        SELECT Device, `Count` FROM test_data._device_freq;
+    """
     )
+    expected_results: pd.DataFrame = expected.result().to_dataframe()
+
 
     logger.debug("Results:\n%s", results)
-    logger.debug("Expected:\n%s", expected)
+    logger.debug("Expected:\n%s", expected_results)
 
-    pd.testing.assert_frame_equal(results, expected)
+    pd.testing.assert_frame_equal(results, expected_results)

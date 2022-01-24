@@ -9,23 +9,25 @@ import logging
 import pandas as pd
 import pytest
 
+from google.cloud import bigquery
+
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usefixtures("create_stored_procedures")
-def test_get_device_frequencies_exists(session):
+def test_get_device_frequencies_exists(session: bigquery.Client) -> None:
     """
     Check that stored procedure is available in the DB
     """
-    query = session.query(
+    query: bigquery.job.QueryJob = session.query(
         """
         SELECT *
         FROM `data-exfil-detection.test_data.INFORMATION_SCHEMA.ROUTINES`
         WHERE routine_name = 'create_strata'
     """
     )
-    results = query.result().to_dataframe()
+    results: pd.DataFrame = query.result().to_dataframe()
 
     expected = pd.Series(["create_strata"], name="routine_name")
 
@@ -36,12 +38,12 @@ def test_get_device_frequencies_exists(session):
     pd.testing.assert_series_equal(results["routine_name"], expected)
     
 
-def test_create_strata_stratifies(session):
+def test_create_strata_stratifies(session: bigquery.Client) -> None:
     """
     Check that stored procedure splits the data into
     separate strata
     """
-    query = session.query(
+    query: bigquery.job.QueryJob = session.query(
         """
         CALL test_data.get_device_frequencies();
         CALL test_data.create_strata();
@@ -49,7 +51,7 @@ def test_create_strata_stratifies(session):
         SELECT * FROM _device_strata;
     """
     )
-    results = query.result().to_dataframe()
+    results: pd.DataFrame = query.result().to_dataframe()
     
     expected = pd.DataFrame({
         "Device": ["Device3", "Device1", "Device2"],

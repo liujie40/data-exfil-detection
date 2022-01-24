@@ -1,4 +1,4 @@
 .venv/
 **/__pycache__
 .conf/
-.pytest_cache/
+**/.pytest_cache/

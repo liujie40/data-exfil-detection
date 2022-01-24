@@ -7,12 +7,13 @@ import logging
 import pandas as pd
 import pytest
 
+from google.cloud import bigquery
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usefixtures("create_stored_procedures")
-def test_data_is_transformed(session):
+def test_data_is_transformed(session: bigquery.Client) -> None:
     """
     Acceptance test to ensure the transform sql script
     transforms netflow data to device level network data
@@ -27,10 +28,10 @@ def test_data_is_transformed(session):
 
     logger.debug("Script being ran:\n%s", script)
 
-    query = session.query(script)
+    query: bigquery.job.QueryJob = session.query(script)
     query.result()
 
-    transformed_data = (
+    transformed_data: pd.DataFrame = (
         session.query(
             """
         SELECT * FROM `data-exfil-detection.test_data.transformed_data`
@@ -41,7 +42,7 @@ def test_data_is_transformed(session):
     )
     logger.debug("Transformed_data:\n%s", transformed_data)
 
-    test_data = (
+    test_data: pd.DataFrame = (
         session.query(
             """
         SELECT * FROM `data-exfil-detection.test_data.device_level_data`

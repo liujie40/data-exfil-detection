@@ -15,13 +15,7 @@ git clone https://github.com/danielyates2/data-exfil-detection.git
 
 #### 2. Setup big query datasets and table
 ```
-bq mk --dataset --location=EU lanl_netflow
-bq mk --dataset --location=EU test_data
-
-bq mk --table --schema=./data-eng/schemas/netflow_table_schema.json lanl_netflow.netflow
-
-bq mk --table --schema=./data-eng/schemas/netflow_table_schema.json test_data.netflow
-bq mk --table --schema=./data-eng/schemas/device_level_table_schema.json test_data.device_level_data
+python data-eng/setup/bq_setup.py
 ```
 
 #### 3. Create test data
@@ -49,3 +43,4 @@ cat data_eng/sql/transform.sql | bq --location=EU query \
 ## TODO
 * Finish unit tests for first stored proc
 * Finish reformatting to comply with pylint
+* Write script to set up bigquery datasets and tables and run steps above

@@ -21,6 +21,16 @@ VALUES(60,99,"Device2","Device1",8,"Port3","Port1",1,0,100,0),
 (840,64,"Device3","Device1",8,"Port2","Port1",0,1,0,100),
 (840,31,"Device3","Device1",2,"Port2","Port3",0,1,0,100);
 
+INSERT INTO `data-exfil-detection.test_data._device_freq`
+VALUES("Device3", 17),
+("Device1", 15),
+("Device2", 10);
+
+INSERT INTO `data-exfil-detection.test_data._device_strata`
+VALUES("Device3", "High"),
+("Device1", "Medium"),
+("Device2", "Low")
+
 INSERT INTO `data-exfil-detection.test_data.device_level_data`
 VALUES("Device1","1970-01-01 00:05:00","Port1",100,0),
 ("Device1","1970-01-01 00:05:00","Port2",100,100),

@@ -23,9 +23,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Reformat with black
-      run: |
-        black .
     - name: Lint with PyLint
       run: |
         pylint tests/**/*.py

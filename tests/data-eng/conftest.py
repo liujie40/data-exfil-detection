@@ -6,22 +6,28 @@ Author: Daniel Yates
 import json
 import logging
 import pathlib
+
+from typing import List, Dict, Any, Union
+
 import pytest
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
-from typing import List, Dict, Any, Union
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="function")
 def get_schema(request) -> Dict[str, Any]:
+    """
+    This fixture loads the required schema and returns it to
+    the test
+    """
     schema_path: Union[pathlib.Path, str] = request.param
     logger.debug("Schema path provided: %s", schema_path)
 
-    if isinstance(schema_path, pathlib.Path) or isinstance(schema_path, str):
-        with open(schema_path, "r") as schema_file:
+    if isinstance(schema_path, (pathlib.Path, str)):
+        with open(schema_path, "r", encoding="utf-8") as schema_file:
             return json.load(schema_file)
     else:
         raise TypeError("%s is not a string or a pathlib.Path")
@@ -29,6 +35,10 @@ def get_schema(request) -> Dict[str, Any]:
 
 @pytest.fixture(scope="function")
 def bq_setup_cli_args(request) -> List[str]:
+    """
+    Pass the command line arguments for the bq_setup script
+    and pass them to the test
+    """
     logger.debug(
         "Command passed to subprocess:\n%s", " ".join(["python"] + request.param)
     )
@@ -38,13 +48,18 @@ def bq_setup_cli_args(request) -> List[str]:
 
 @pytest.fixture(scope="function")
 def bq_setup_script_teardown(request, session: bigquery.Client) -> None:
+    """
+    Destroy any datasets and tables created as part of
+    the testing
+    """
+    # pylint: disable=redefined-outer-name
     yield
 
     try:
         start = request.param.index("-d")
     except ValueError:
         logger.warning("No datasets in arguments")
-        return None
+        return
 
     try:
         end = request.param.index("-t")
@@ -79,6 +94,7 @@ def create_stored_procedures(session: bigquery.Client) -> None:
     """
     Runs all of the SQL statements to create the stored procedures.
     """
+    # pylint: disable=redefined-outer-name
     logger.info("Creating stored procedures")
 
     with open("data-eng/sql/procedures.sql", "r", encoding="utf-8") as proc_file:

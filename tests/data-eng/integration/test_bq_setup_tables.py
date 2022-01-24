@@ -5,13 +5,14 @@ big query tables
 Author: Daniel Yates
 """
 import logging
-import pytest
 import subprocess
+
+from typing import List, Dict, Any, Optional
+
+import pytest
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
-from typing import List, Dict, Any
-from unittest import TestCase
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,8 @@ def test_lanl_netflow_table_exists(
     """
     Tests if the lanl_netflow table exists
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     lanl_netflow_table: bigquery.table.Table = session.get_table(
         "test_lanl_netflow.netflow"
@@ -67,7 +69,8 @@ def test_test_data_netflow_table_exists(
     """
     Tests if the lanl_netflow table exists
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     test_data_netflow_table: bigquery.table.Table = session.get_table(
         "test_test_data.netflow"
@@ -90,7 +93,8 @@ def test_no_tables_passed_none_created(
     """
     Test that no tables are created if there aren't any passed as args
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     test_lanl_netflow_exists: Optional[bool] = None
     test_test_data_netflow_exists: Optional[bool] = None
@@ -125,11 +129,15 @@ def test_no_tables_passed_warning_raised(
     Tests that the script logs a warning that no table args
     were passed
     """
-    cp: subprocess.CompletedProcess = subprocess.run(
-        ["python"] + bq_setup_cli_args, capture_output=True, encoding="utf-8"
+    # pylint: disable=unused-argument
+    c_p: subprocess.CompletedProcess = subprocess.run(
+        ["python"] + bq_setup_cli_args,
+        capture_output=True,
+        encoding="utf-8",
+        check=True,
     )
 
-    assert "No tables passed to script" in vars(cp)["stderr"]
+    assert "No tables passed to script" in vars(c_p)["stderr"]
 
 
 @pytest.mark.parametrize(
@@ -149,7 +157,8 @@ def test_table_created_with_correct_schema(
     """
     Tests that the tables are created with the correct schema
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     lanl_netflow_table: bigquery.table.Table = session.get_table(
         "test_lanl_netflow.netflow"

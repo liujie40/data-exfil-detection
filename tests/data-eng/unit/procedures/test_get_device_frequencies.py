@@ -45,7 +45,8 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
         """
         CALL test_data.get_device_frequencies();
         
-        SELECT Device, Count FROM _device_freq;
+        SELECT Device, Count FROM _device_freq
+        ORDER BY Count DESC;
     """
     )
     results: pd.DataFrame = query.result().to_dataframe()

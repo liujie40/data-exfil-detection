@@ -3,12 +3,14 @@ Test the bq_setup script which creates the required
 big query datasets
 """
 import logging
-import pytest
 import subprocess
+
+from typing import List, Optional
+
+import pytest
 
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound, Conflict
-from typing import List, Optional
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +42,8 @@ def test_lanl_netflow_dataset_exists(
     """
     Tests if the lanl_netflow dataset exists
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     lanl_dataset: bigquery.dataset.Dataset = session.get_dataset("test_lanl_netflow")
 
@@ -61,7 +64,8 @@ def test_test_data_dataset_exists(
     """
     Tests if the test_data dataset exists
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     test_data: bigquery.dataset.Dataset = session.get_dataset("test_test_data")
 
@@ -80,7 +84,8 @@ def test_no_datasets_passed_none_created(
     Tests that the script doesn't create any datasets when passed
     no dataset args
     """
-    subprocess.run(["python"] + bq_setup_cli_args)
+    # pylint: disable=unused-argument
+    subprocess.run(["python"] + bq_setup_cli_args, check=True)
 
     test_lanl_netflow_exists: Optional[bool] = None
     test_test_data_exists: Optional[bool] = None
@@ -112,11 +117,15 @@ def test_no_datasets_passed_warning_raised(
     Tests that the script logs a warning that no dataset args
     were passed
     """
-    cp: subprocess.CompletedProcess = subprocess.run(
-        ["python"] + bq_setup_cli_args, capture_output=True, encoding="utf-8"
+    # pylint: disable=unused-argument
+    c_p: subprocess.CompletedProcess = subprocess.run(
+        ["python"] + bq_setup_cli_args,
+        capture_output=True,
+        encoding="utf-8",
+        check=True,
     )
 
-    assert "No datasets passed to script" in vars(cp)["stderr"]
+    assert "No datasets passed to script" in vars(c_p)["stderr"]
 
 
 @pytest.mark.parametrize(
@@ -134,6 +143,7 @@ def test_dataset_already_exists_fails(
     """
     Tests that the dataset creation fails if the dataset already exists
     """
+    # pylint: disable=unused-argument
     start = bq_setup_cli_args.index("-d")
     end = len(bq_setup_cli_args)
 
@@ -141,9 +151,12 @@ def test_dataset_already_exists_fails(
         session.create_dataset(dataset)
         logger.debug("%s created", dataset)
 
-    cp: subprocess.CompletedProcess = subprocess.run(
-        ["python"] + bq_setup_cli_args, capture_output=True, encoding="utf-8"
+    c_p: subprocess.CompletedProcess = subprocess.run(
+        ["python"] + bq_setup_cli_args,
+        capture_output=True,
+        encoding="utf-8",
+        check=True,
     )
     conflict_exception = Conflict.__module__ + "." + Conflict.__qualname__
 
-    assert conflict_exception in vars(cp)["stderr"]
+    assert conflict_exception in vars(c_p)["stderr"]

@@ -10,7 +10,7 @@ from typing import List, Optional
 import pytest
 
 from google.cloud import bigquery
-from google.cloud.exceptions import NotFound, Conflict
+from google.cloud.exceptions import NotFound
 
 
 logger = logging.getLogger(__name__)
@@ -151,12 +151,10 @@ def test_dataset_already_exists_fails(
         session.create_dataset(dataset)
         logger.debug("%s created", dataset)
 
-    c_p: subprocess.CompletedProcess = subprocess.run(
-        ["python"] + bq_setup_cli_args,
-        capture_output=True,
-        encoding="utf-8",
-        check=True,
-    )
-    conflict_exception = Conflict.__module__ + "." + Conflict.__qualname__
-
-    assert conflict_exception in vars(c_p)["stderr"]
+    with pytest.raises(subprocess.CalledProcessError):
+        subprocess.run(
+            ["python"] + bq_setup_cli_args,
+            capture_output=True,
+            encoding="utf-8",
+            check=True,
+        )

@@ -58,7 +58,6 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
     )
     expected_results: pd.DataFrame = expected.result().to_dataframe()
 
-
     logger.debug("Results:\n%s", results)
     logger.debug("Expected:\n%s", expected_results)
 

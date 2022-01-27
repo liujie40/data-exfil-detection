@@ -4,6 +4,7 @@ big query tables
 
 Author: Daniel Yates
 """
+import json
 import logging
 import subprocess
 
@@ -168,3 +169,59 @@ def test_table_created_with_correct_schema(
     expected_schema = get_schema
 
     assert actual_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "bq_setup_script_teardown, bq_setup_cli_args, get_schema",
+    [
+        (table_args, table_args, "data-eng/schemas/netflow.json"),
+        (table_args[:7], table_args[:7], "data-eng/schemas/netflow.json"),
+        (
+            table_args[:6] + table_args[7:8],
+            table_args[:6] + table_args[7:8],
+            "data-eng/schemas/netflow.json",
+        ),
+    ],
+    indirect=True,
+)
+def test_table_already_exists_fails(
+    session: bigquery.Client,
+    bq_setup_script_teardown,
+    bq_setup_cli_args: List[str],
+    get_schema: Dict[str, Any],
+) -> None:
+    """
+    Tests that the table creation fails if the dataset already exists
+    """
+    # pylint: disable=unused-argument
+    start = bq_setup_cli_args.index("-d")
+    end = bq_setup_cli_args.index("-t")
+
+    for dataset in bq_setup_cli_args[start + 1 : end]:
+        session.create_dataset(dataset)
+        logger.debug("%s created", dataset)
+
+    start = bq_setup_cli_args.index("-t")
+    end = len(bq_setup_cli_args)
+
+    for table in bq_setup_cli_args[start + 1 : end]:
+        with open(
+            f"data-eng/schemas/{table.split('.')[1]}.json", "r", encoding="utf-8"
+        ) as schema_file:
+            schema = json.load(schema_file)
+
+        table_obj = bigquery.table.Table("data-exfil-detection." + table, schema)
+
+        session.create_table(table_obj)
+
+        logger.debug("%s created", table)
+
+    with pytest.raises(subprocess.CalledProcessError):
+        subprocess.run(
+            ["python"]
+            + bq_setup_cli_args[: bq_setup_cli_args.index("-d")]
+            + bq_setup_cli_args[bq_setup_cli_args.index("-t") :],
+            capture_output=True,
+            encoding="utf-8",
+            check=True,
+        )

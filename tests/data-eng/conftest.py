@@ -104,6 +104,7 @@ def create_stored_procedures(session: bigquery.Client) -> None:
     for proc in procedures.split("END;"):
         if proc.replace("\n", ""):
             proc = proc.replace("lanl_netflow.", "test_data.")
+            proc = proc.replace("FROM _", "FROM test_data._")
             proc += "END;"
 
             logger.debug("Procedure being ran:\n%s", proc)

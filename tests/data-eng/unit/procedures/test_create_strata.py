@@ -45,7 +45,6 @@ def test_create_strata_stratifies(session: bigquery.Client) -> None:
     """
     query: bigquery.job.QueryJob = session.query(
         """
-        CALL test_data.get_device_frequencies();
         CALL test_data.create_strata();
         
         SELECT * FROM _device_strata;
@@ -53,14 +52,14 @@ def test_create_strata_stratifies(session: bigquery.Client) -> None:
     )
     results: pd.DataFrame = query.result().to_dataframe()
 
-    expected = pd.DataFrame(
-        {
-            "Device": ["Device3", "Device1", "Device2"],
-            "Strata": ["high", "medium", "low"],
-        }
+    expected: bigquery.job.QueryJob = session.query(
+        """
+        SELECT Device, `Count` FROM test_data._device_strata;
+    """
     )
+    expected_results: pd.DataFrame = expected.result().to_dataframe()
 
     logger.debug("Results:\n%s", results)
-    logger.debug("Expected strata:\n%s", expected)
+    logger.debug("Expected strata:\n%s", expected_results)
 
-    pd.testing.assert_frame_equal(results, expected)
+    pd.testing.assert_frame_equal(results, expected_results)

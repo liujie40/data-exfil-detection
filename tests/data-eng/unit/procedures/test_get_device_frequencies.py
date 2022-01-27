@@ -63,4 +63,3 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
     logger.debug("Expected:\n%s", expected_results)
 
     pd.testing.assert_frame_equal(results, expected_results)
- 

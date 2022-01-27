@@ -1,3 +1,4 @@
+TRUNCATE TABLE `data-exfil-detection.test_data.netflow`;
 INSERT INTO `data-exfil-detection.test_data.netflow`
 VALUES(60,99,"Device2","Device1",8,"Port3","Port1",1,0,100,0),
 (60,59,"Device2","Device3",4,"Port1","Port2",2,2,200,200),
@@ -19,18 +20,48 @@ VALUES(60,99,"Device2","Device1",8,"Port3","Port1",1,0,100,0),
 (780,8,"Device2","Device3",1,"Port2","Port2",2,0,200,0),
 (780,2,"Device2","Device3",8,"Port2","Port3",1,0,100,0),
 (840,64,"Device3","Device1",8,"Port2","Port1",0,1,0,100),
-(840,31,"Device3","Device1",2,"Port2","Port3",0,1,0,100);
+(840,31,"Device3","Device1",2,"Port2","Port3",0,1,0,100),
+(60,99,"Device5","Device4",8,"Port3","Port1",1,0,100,0),
+(60,59,"Device5","Device6",4,"Port1","Port2",2,2,200,200),
+(120,10,"Device4","Device6",2,"Port2","Port1",1,1,100,100),
+(120,17,"Device4","Device6",6,"Port3","Port3",1,1,100,100),
+(240,64,"Device6","Device5",7,"Port1","Port1",1,0,100,0),
+(300,88,"Device4","Device5",6,"Port1","Port2",0,1,0,100),
+(360,72,"Device4","Device5",5,"Port1","Port3",0,1,0,100),
+(360,95,"Device5","Device6",4,"Port1","Port1",1,0,50,0),
+(420,87,"Device4","Device6",7,"Port2","Port3",1,1,50,50),
+(420,9,"Device6","Device4",6,"Port1","Port3",1,1,100,100),
+(420,77,"Device6","Device4",5,"Port2","Port3",1,0,100,0),
+(480,61,"Device4","Device6",5,"Port1","Port1",2,0,200,0),
+(540,33,"Device4","Device6",3,"Port1","Port2",1,0,100,0),
+(600,24,"Device4","Device5",6,"Port2","Port1",0,1,0,50),
+(600,79,"Device4","Device6",2,"Port2","Port1",2,1,200,20),
+(660,87,"Device6","Device4",7,"Port2","Port2",1,0,30,0),
+(720,66,"Device5","Device6",6,"Port2","Port1",1,0,100,0),
+(780,8,"Device5","Device6",1,"Port2","Port2",2,0,200,0),
+(780,2,"Device5","Device6",8,"Port2","Port3",1,0,100,0),
+(840,64,"Device6","Device4",8,"Port2","Port1",0,1,0,100),
+(840,31,"Device6","Device4",2,"Port2","Port3",0,1,0,100);
 
+TRUNCATE TABLE `data-exfil-detection.test_data._device_freq`;
 INSERT INTO `data-exfil-detection.test_data._device_freq`
 VALUES("Device3", 17),
+("Device6", 17),
 ("Device1", 15),
-("Device2", 10);
+("Device4", 15),
+("Device2", 10),
+("Device5", 10);
 
+TRUNCATE TABLE `data-exfil-detection.test_data._device_strata`;
 INSERT INTO `data-exfil-detection.test_data._device_strata`
-VALUES("Device3", "High"),
-("Device1", "Medium"),
-("Device2", "Low")
+VALUES("Device6", "High"),
+("Device3", "Medium"),
+("Device4", "Medium"),
+("Device1", "Low"),
+("Device5", "Low"),
+("Device2", "Low");
 
+TRUNCATE TABLE `data-exfil-detection.test_data.device_level_data`;
 INSERT INTO `data-exfil-detection.test_data.device_level_data`
 VALUES("Device1","1970-01-01 00:05:00","Port1",100,0),
 ("Device1","1970-01-01 00:05:00","Port2",100,100),
@@ -58,4 +89,31 @@ VALUES("Device1","1970-01-01 00:05:00","Port1",100,0),
 ("Device3","1970-01-01 00:10:00","Port3",50,50),
 ("Device3","1970-01-01 00:15:00","Port1",100,20),
 ("Device3","1970-01-01 00:15:00","Port2",400,30),
-("Device3","1970-01-01 00:15:00","Port3",100,0);
+("Device3","1970-01-01 00:15:00","Port3",100,0),
+("Device4","1970-01-01 00:05:00","Port1",100,0),
+("Device4","1970-01-01 00:05:00","Port2",100,100),
+("Device4","1970-01-01 00:05:00","Port3",100,100),
+("Device4","1970-01-01 00:10:00","Port1",200,300),
+("Device4","1970-01-01 00:10:00","Port2",50,50),
+("Device4","1970-01-01 00:10:00","Port3",200,100),
+("Device4","1970-01-01 00:15:00","Port1",0,100),
+("Device4","1970-01-01 00:15:00","Port2",100,200),
+("Device4","1970-01-01 00:15:00","Port3",0,100),
+("Device5","1970-01-01 00:05:00","Port1",300,200),
+("Device5","1970-01-01 00:05:00","Port2",0,0),
+("Device5","1970-01-01 00:05:00","Port3",0,100),
+("Device5","1970-01-01 00:10:00","Port1",0,50),
+("Device5","1970-01-01 00:10:00","Port2",0,100),
+("Device5","1970-01-01 00:10:00","Port3",0,100),
+("Device5","1970-01-01 00:15:00","Port1",0,50),
+("Device5","1970-01-01 00:15:00","Port2",0,400),
+("Device5","1970-01-01 00:15:00","Port3",0,0),
+("Device6","1970-01-01 00:05:00","Port1",100,200),
+("Device6","1970-01-01 00:05:00","Port2",200,200),
+("Device6","1970-01-01 00:05:00","Port3",100,100),
+("Device6","1970-01-01 00:10:00","Port1",350,100),
+("Device6","1970-01-01 00:10:00","Port2",100,100),
+("Device6","1970-01-01 00:10:00","Port3",50,50),
+("Device6","1970-01-01 00:15:00","Port1",100,20),
+("Device6","1970-01-01 00:15:00","Port2",400,30),
+("Device6","1970-01-01 00:15:00","Port3",100,0);

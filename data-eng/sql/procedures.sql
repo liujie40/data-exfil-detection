@@ -34,7 +34,7 @@ BEGIN
   FROM (
     SELECT
       Device,
-      SUM(Proportions) OVER(ORDER BY Proportions DESC) AS CumProps
+      SUM(Proportions) OVER(ORDER BY Proportions DESC, Device DESC) AS CumProps
     FROM(
       SELECT
         Device,

@@ -46,14 +46,15 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
         CALL test_data.get_device_frequencies();
         
         SELECT Device, Count FROM _device_freq
-        ORDER BY Count DESC;
+        ORDER BY Count DESC, Device DESC;
     """
     )
     results: pd.DataFrame = query.result().to_dataframe()
 
     expected: bigquery.job.QueryJob = session.query(
         """
-        SELECT Device, `Count` FROM test_data._device_freq;
+        SELECT Device, `Count` FROM test_data._device_freq
+        ORDER BY `Count` DESC, Device DESC;
     """
     )
     expected_results: pd.DataFrame = expected.result().to_dataframe()
@@ -62,3 +63,4 @@ def test_get_device_frequencies_calculate_frequencies(session: bigquery.Client) 
     logger.debug("Expected:\n%s", expected_results)
 
     pd.testing.assert_frame_equal(results, expected_results)
+ 

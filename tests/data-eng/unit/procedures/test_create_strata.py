@@ -47,14 +47,16 @@ def test_create_strata_stratifies(session: bigquery.Client) -> None:
         """
         CALL test_data.create_strata();
         
-        SELECT * FROM _device_strata;
+        SELECT * FROM _device_strata
+        ORDER BY Device DESC;
     """
     )
     results: pd.DataFrame = query.result().to_dataframe()
 
     expected: bigquery.job.QueryJob = session.query(
         """
-        SELECT Device, `Count` FROM test_data._device_strata;
+        SELECT Device, Strata FROM test_data._device_strata
+        ORDER BY Device DESC;
     """
     )
     expected_results: pd.DataFrame = expected.result().to_dataframe()
